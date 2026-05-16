@@ -24,9 +24,9 @@ const blogSchema = new mongoose.Schema({
     },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-    isPublished: {
-        type: Boolean,
-        default: false
+    isPublished:{
+        type:Boolean,
+        default:false
     }
 
 

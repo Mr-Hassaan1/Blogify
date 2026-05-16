@@ -85,6 +85,7 @@ const UpdateBlog = () => {
       );
       if (res.data.success) {
         toast.success(res.data.message);
+
         console.log(blogData);
       }
     } catch (error) {
@@ -98,15 +99,12 @@ const UpdateBlog = () => {
     console.log("action", action);
 
     try {
-      const res = await axios.patch(
-       `http://localhost:3200/api/v1/blog/${id}`,
-        {
-          params: {
-            action,
-          },
-          withCredentials: true,
+      const res = await axios.patch(`http://localhost:3200/api/v1/blog/${id}`, {
+        params: {
+          action,
         },
-      );
+        withCredentials: true,
+      });
       if (res.data.success) {
         setPublish(!publish);
         toast.success(res.data.message);
@@ -122,7 +120,7 @@ const UpdateBlog = () => {
   const deleteBlog = async () => {
     try {
       const res = await axios.delete(
-       `http://localhost:3200/api/v1/blog/${id}`,
+        `http://localhost:3200/api/v1/blog/delete/${id}`,
         { withCredentials: true },
       );
       if (res.data.success) {

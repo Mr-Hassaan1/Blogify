@@ -39,10 +39,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FaEdit, FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
+import { FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
 import { toggleTheme } from "@/Redux/themeSlice";
 import { LiaCommentSolid } from "react-icons/lia";
-// import ResponsiveMenu from './ResponsiveMenu'
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
@@ -57,7 +56,7 @@ function Navbar() {
       });
 
       if (res.data.success) {
-        navigate("/");
+        navigate("/login");
         dispatch(setUser(null));
         toast.success(res.data.message);
       }

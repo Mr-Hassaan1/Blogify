@@ -63,9 +63,8 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <ProtectedRoute>
-          <BlogView />
-        </ProtectedRoute>
+
+        <BlogView />
       </>
     ),
   },
