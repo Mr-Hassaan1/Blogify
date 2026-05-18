@@ -2,19 +2,21 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
+import { Toaster } from "@/components/ui/sonner";
 import { Provider } from "react-redux";
-import { Toaster } from "./components/ui/sonner";
-import store from "./Redux/store";
-import ThemeProvider from "./components/ThemeProvider.jsx";
-
+import store, { persistor } from "./Redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import ThemeProvider from "./components/ThemeProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-      <Toaster />
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </PersistGate>
     </Provider>
+    <Toaster />
   </StrictMode>,
 );

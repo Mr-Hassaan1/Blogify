@@ -41,7 +41,7 @@ function Signup() {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        "http://localhost:4000/api/v1/user/register",
+        "http://localhost:3200/api/v1/user/register",
         userData,
         {
           headers: {

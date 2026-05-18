@@ -1,15 +1,48 @@
-import { Link, useNavigate } from "react-router-dom";
-import Logo from "../assets/logo.png";
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
-import { Button } from "../components/ui/button";
-import { Search } from "lucide-react";
-import { FaMoon, FaSun } from "react-icons/fa";
+import Logo from "../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme } from "../Redux/themeSlice";
 import { toast } from "sonner";
 import axios from "axios";
-import { setUser } from "../Redux/authSlice";
+import { setUser } from "@/Redux/authSlice";
+import userLogo from "../assets/user.jpg";
+import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
+import {
+  ChartColumnBig,
+  Cloud,
+  CreditCard,
+  Github,
+  Keyboard,
+  LifeBuoy,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Plus,
+  PlusCircle,
+  Search,
+  Settings,
+  User,
+  UserPlus,
+  Users,
+} from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { FaEdit, FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
+import { toggleTheme } from "@/Redux/themeSlice";
+import { LiaCommentSolid } from "react-icons/lia";
+// import ResponsiveMenu from './ResponsiveMenu'
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
@@ -19,7 +52,7 @@ function Navbar() {
 
   const logoutHandler = async (e) => {
     try {
-      const res = await axios.get("http://localhost:4000/api/v1/user/logout", {
+      const res = await axios.get("http://localhost:3200/api/v1/user/logout", {
         withCredentials: true,
       });
 
@@ -35,7 +68,7 @@ function Navbar() {
   };
 
   return (
-    <div className="py-2 fixed w-full dark:bg-gray-800 dark:border-b-gray-600 border-b-gray-300 border-2 bg-white z-50">
+    <div className="py-2 fixed w-full dark:bg-gray-800 dark:border-b-gray-600 border-b-gray-300 border-2 bg-gray-200 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-0">
         <div className="flex gap-7 items-center">
           <Link>
@@ -50,7 +83,7 @@ function Navbar() {
             <Input
               type="text"
               placeholder="Search..."
-              className="border border-gray-700 dark:border-gray-900 bg-gray-300 w-[300] hidden md:block"
+              className="border border-gray-700 dark:border-gray-900 bg-gray-300 w-50 hidden md:block"
             />
             <Button className="absolute top-0 right-0">
               <Search />
@@ -58,8 +91,9 @@ function Navbar() {
           </div>
         </div>
 
-        <nav className="flex gap-7 md:gap-4 items-center">
-          <ul className=" hidden md:flex gap-7 items-center text-xl font-semibold">
+        {/* nav section */}
+        <nav className="flex gap-7 md:gap-8 items-center">
+          <ul className=" hidden md:flex gap-8 items-center text-xl font-semibold">
             <Link to={"/"}>
               <li>Home</li>
             </Link>
@@ -71,16 +105,57 @@ function Navbar() {
             </Link>
           </ul>
           <div className="flex">
-            <Button onClick={() => dispatch(toggleTheme())}>
+            <Button className="h-10 w-10" onClick={() => dispatch(toggleTheme())}>
               {theme === "light" ? <FaMoon /> : <FaSun />}
             </Button>
             {user ? (
-              <div className="ml-7 flex gap-3 items-center">
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <Button onClick={logoutHandler}>Logout</Button>
+              <div className="ml-7 flex gap-8 items-center">
+                <DropdownMenu className="">
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="cursor-pointer">
+                      <AvatarImage src={user.photoUrl || userLogo} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className=" dark:bg-gray-800">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/dashboard/profile")}
+                      >
+                        <User />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/dashboard/your-blog")}
+                      >
+                        <ChartColumnBig />
+                        <span>Your Blog</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/dashboard/comments")}
+                      >
+                        <LiaCommentSolid />
+                        <span>Comments</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/dashboard/create-blog")}
+                      >
+                        <FaRegEdit />
+                        <span>Create Blog</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={logoutHandler}>
+                      <LogOut />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button className="hidden md:block" onClick={logoutHandler}>
+                  Logout
+                </Button>
               </div>
             ) : (
               <div className="ml-7 md:flex gap-2">
