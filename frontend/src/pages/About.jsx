@@ -1,4 +1,3 @@
-import React from "react";
 import aboutImg from "../assets/About-blog.avif";
 
 const About = () => {

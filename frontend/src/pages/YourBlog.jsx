@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,6 +14,7 @@ import { setBlog } from "@/Redux/blogSlice";
 import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useEffect } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import {
   DropdownMenu,
@@ -28,23 +28,23 @@ function YourBlog() {
   const dispatch = useDispatch();
   const { blog } = useSelector((store) => store.blog);
 
-  const getOwnBlog = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3200/api/v1/blog/get-own-blogs`,
-        { withCredentials: true },
-      );
-      if (res.data.success) {
-        dispatch(setBlog(res.data.blogs));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const getOwnBlog = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3200/api/v1/blog/get-own-blogs`,
+          { withCredentials: true },
+        );
+        if (res.data.success) {
+          dispatch(setBlog(res.data.blogs));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getOwnBlog();
-  }, []);
+  }, [dispatch]);
 
   const dateHandler = (index) => {
     const date = new Date(blog[index].createdAt);

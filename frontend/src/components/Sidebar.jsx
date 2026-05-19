@@ -1,8 +1,7 @@
-import { ChartColumnBig, FolderPlus, SquareUser } from "lucide-react";
+import { ChartColumnBig, SquareUser } from "lucide-react";
 import { LiaCommentSolid } from "react-icons/lia";
-import React from "react";
 import { NavLink } from "react-router-dom";
-import { FaEdit, FaRegEdit } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
 
 const Sidebar = () => {
   return (

@@ -35,9 +35,8 @@ function Navbar() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handelSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim() != "") {
+  const handelSearch = () => {
+    if (searchTerm.trim() !== "") {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setSearchTerm("");
     }
@@ -47,7 +46,7 @@ function Navbar() {
     setOpenNav(!openNav);
   };
 
-  const logoutHandler = async (e) => {
+  const logoutHandler = async () => {
     try {
       const res = await axios.get("http://localhost:3200/api/v1/user/logout", {
         withCredentials: true,

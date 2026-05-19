@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
-import { LuSend } from "react-icons/lu";
 import { Button } from "./ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -54,8 +53,8 @@ const CommentBox = ({ selectedBlog }) => {
         console.log(error);
       }
     };
-    getAllCommentsOfBlog();
-  }, []);
+    if (selectedBlog?._id) getAllCommentsOfBlog();
+  }, [selectedBlog?._id, dispatch]);
 
   const commentHandler = async () => {
     try {

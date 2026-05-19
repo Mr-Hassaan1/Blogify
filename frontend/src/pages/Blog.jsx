@@ -23,7 +23,7 @@ const Blog = () => {
       }
     };
     getAllPublishedBlogs();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="pt-16">

@@ -32,7 +32,7 @@ export default function Comments() {
   };
 
   useEffect(() => {
-    getTotalComments();
+    setTimeout(() => getTotalComments(), 0);
   }, []);
   console.log(allComments);
 

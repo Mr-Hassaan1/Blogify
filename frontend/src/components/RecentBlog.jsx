@@ -52,7 +52,7 @@ const RecentBlog = () => {
       }
     };
     getAllPublishedBlogs();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 pb-10">

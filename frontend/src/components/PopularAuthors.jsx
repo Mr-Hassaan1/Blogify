@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import userLogo from "../assets/user.jpg";
 
 const PopularAuthors = () => {
@@ -7,7 +7,7 @@ const PopularAuthors = () => {
   const getAllUsers = async () => {
     try {
       const res = await axios.get(
-       `http://localhost:3200/api/v1/user/all-users`,
+        `http://localhost:3200/api/v1/user/all-users`,
       );
       if (res.data.success) {
         setPopularUser(res.data.users);
@@ -17,7 +17,11 @@ const PopularAuthors = () => {
     }
   };
   useEffect(() => {
-    getAllUsers();
+    const timer = setTimeout(() => {
+      getAllUsers();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
   return (
     <div>
