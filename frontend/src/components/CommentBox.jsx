@@ -22,17 +22,10 @@ const CommentBox = ({ selectedBlog }) => {
   const { comment } = useSelector((store) => store.comment);
   const [content, setContent] = useState("");
   const { blog } = useSelector((store) => store.blog);
-  const [activeReplyId, setActiveReplyId] = useState(null);
-  const [replyText, setReplyText] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
 
   const dispatch = useDispatch();
-
-  const handleReplyClick = (commentId) => {
-    setActiveReplyId(activeReplyId === commentId ? null : commentId);
-    setReplyText("");
-  };
 
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
@@ -207,7 +200,6 @@ const CommentBox = ({ selectedBlog }) => {
                       <h1 className="font-semibold">
                         {item?.userId?.firstName} {item?.userId?.lastName}
                         <span className="text-sm ml-2 font-light">
-                          
                           {new Date(item.createdAt).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -227,6 +219,7 @@ const CommentBox = ({ selectedBlog }) => {
                             <Button
                               size="sm"
                               onClick={() => editCommentHandler(item._id)}
+                              className="cursor-pointer"
                             >
                               Save
                             </Button>
@@ -234,6 +227,7 @@ const CommentBox = ({ selectedBlog }) => {
                               size="sm"
                               variant="outline"
                               onClick={() => setEditingCommentId(null)}
+                              className="cursor-pointer"
                             >
                               Cancel
                             </Button>
@@ -256,23 +250,17 @@ const CommentBox = ({ selectedBlog }) => {
                             <span>{item.numberOfLikes}</span>
                           </div>
                         </div>
-                        <p
-                          onClick={() => handleReplyClick(item._id)}
-                          className="text-sm cursor-pointer"
-                        >
-                          Reply
-                        </p>
                       </div>
                     </div>
                   </div>
                   {user._id === item?.userId?._id ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger>
-                        <BsThreeDots />
+                        <BsThreeDots className="cursor-pointer" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-45">
                         <DropdownMenuItem
-                        className="cursor-pointer"
+                          className="cursor-pointer"
                           onClick={() => {
                             setEditingCommentId(item._id);
                             setEditedContent(item.content);
@@ -292,19 +280,6 @@ const CommentBox = ({ selectedBlog }) => {
                     </DropdownMenu>
                   ) : null}
                 </div>
-                {activeReplyId === item?._id && (
-                  <div className="flex gap-3 w-full px-10">
-                    <Textarea
-                      placeholder="Reply here ..."
-                      className="border-2 dark:border-gray-500 bg-gray-200 dark:bg-gray-700"
-                      onChange={(e) => setReplyText(e.target.value)}
-                      value={replyText}
-                    />
-                    <Button className="h-16 cursor-pointer" onClick={commentHandler}>
-                      <LucideSend />
-                    </Button>
-                  </div>
-                )}
               </div>
             );
           })}

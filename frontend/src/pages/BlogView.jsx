@@ -32,6 +32,7 @@ const BlogView = () => {
   );
 
   const [bookmarked, setBookmarked] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const dispatch = useDispatch();
   console.log(selectedBlog);
@@ -163,10 +164,11 @@ const BlogView = () => {
         <div className="mt-10">
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-8">
-            <Badge variant="secondary">Nodejs</Badge>
-            <Badge variant="secondary">React</Badge>
-            <Badge variant="secondary">Web Development</Badge>
-            <Badge variant="secondary">JavaScript</Badge>
+            <Badge variant="secondary">Storytelling</Badge>
+            <Badge variant="secondary">Ideas</Badge>
+            <Badge variant="secondary">Blogs</Badge>
+            <Badge variant="secondary">Trends</Badge>
+            <Badge variant="secondary">Insights</Badge>
           </div>
 
           {/* Engagement */}
@@ -190,6 +192,8 @@ const BlogView = () => {
                 variant="ghost"
                 size="sm"
                 className=" cursor-pointer flex items-center gap-1"
+                onClick={() => setShowComments((s) => !s)}
+                aria-expanded={showComments}
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>{comment.length} Comments</span>
@@ -221,7 +225,7 @@ const BlogView = () => {
             </div>
           </div>
         </div>
-        <CommentBox selectedBlog={selectedBlog} />
+        {showComments && <CommentBox selectedBlog={selectedBlog} />}
       </div>
     </div>
   );

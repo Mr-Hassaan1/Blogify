@@ -11,49 +11,48 @@ const Footer = () => {
   return (
     <footer className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 py-10">
       <div className="max-w-7xl mx-auto px-4 md:flex md:justify-between">
-        {/*  info */}
         <div className="mb-6 md:mb-0">
-          <Link>
+          <Link to={"/"}>
             <img
               src={Logo}
               alt="logo"
               className="w-27 h-7 md:w-33 md:h-10 dark:invert"
             />
           </Link>
-          <p className="mt-2">
-              Sharing stories, ideas, and blogging inspiration.
+          <p className="mt-4">
+            Sharing stories, ideas, and blogging inspiration.
           </p>
-          <p className="mt-2 text-sm">123 Blogify, ISB PK 10001</p>
+          <p className="mt-3 text-sm">123 Blogify, ISB PK 10001</p>
           <p className="text-sm">Email: support@blogify.com</p>
           <p className="text-sm">Phone: (123) 456-7890</p>
         </div>
-        {/* customer service link */}
+
         <div className="mb-6 md:mb-0">
           <h3 className="text-xl font-semibold ">Quick Links</h3>
-          <ul className="mt-2 text-sm space-y-2 cursor-pointer">
+          <ul className="mt-4 text-sm space-y-2 cursor-pointer">
             <li>Home</li>
             <li>Blogs</li>
             <li>About Us</li>
             <li>FAQs</li>
           </ul>
         </div>
-        {/* social media links */}
+=
         <div className="mb-6 md:mb-0">
           <h3 className="text-xl font-semibold">Follow Us</h3>
-          <div className="flex space-x-4 mt-2 cursor-pointer">
+          <div className="flex space-x-4 mt-4 cursor-pointer">
             <FaFacebook />
             <FaInstagram />
             <FaTwitterSquare />
             <FaPinterest />
           </div>
         </div>
-        {/* newsletter subscription */}
+
         <div>
           <h3 className="text-xl font-semibold">Stay in the Loop</h3>
-          <p className="mt-2 text-sm">
+          <p className="mt-4 text-sm">
             Subscribe to get special offers, free giveaways, and more
           </p>
-          <form action="" className="mt-4 flex">
+          <form className="mt-4 flex">
             <input
               type="email"
               placeholder="Your email address"
@@ -68,11 +67,10 @@ const Footer = () => {
           </form>
         </div>
       </div>
-      {/* bottom section */}
       <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6 text-center text-sm">
         <p>
-          &copy; {new Date().getFullYear()}{" "}
-          <span className="text-red-500">Blogify</span>. All rights reserved
+          &copy; 2026 <span className="text-red-500">Blogify</span>. All rights
+          reserved
         </p>
       </div>
     </footer>

@@ -4,16 +4,29 @@ import getDataUri from "../utils/dataUri.js";
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, category } = req.body;
+    const { title, subtitle, description, category } = req.body;
+    const file = req.file;
+
     if (!title || !category) {
       return res.status(400).json({
         message: "Blog title and category must be required!",
       });
     }
+
+    let thumbnail;
+    if (file) {
+      const fileUri = getDataUri(file);
+      const uploadResult = await cloudinary.uploader.upload(fileUri);
+      thumbnail = uploadResult.secure_url;
+    }
+
     const blog = await Blog.create({
       title,
+      subtitle,
+      description,
       category,
       author: req.id,
+      thumbnail,
     });
 
     return res.status(201).json({
@@ -25,6 +38,7 @@ export const createBlog = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Failed to create blog!",
+      error: error.message,
     });
   }
 };
@@ -32,7 +46,7 @@ export const createBlog = async (req, res) => {
 export const updateBlog = async (req, res) => {
   try {
     const blogId = req.params.blogId;
-    const { title, subtitle, description, category } = req.body;
+    const { title, subtitle, description, category, isPublished } = req.body;
     const file = req.file;
 
     let blog = await Blog.findById(blogId).populate("author");
@@ -55,6 +69,10 @@ export const updateBlog = async (req, res) => {
       author: req.id,
       thumbnail: thumbnail?.secure_url,
     };
+    if (typeof isPublished !== "undefined") {
+      updateData.isPublished = isPublished === "true" || isPublished === true;
+    }
+
     blog = await Blog.findByIdAndUpdate(blogId, updateData, { new: true });
 
     res
@@ -71,7 +89,7 @@ export const updateBlog = async (req, res) => {
 
 export const getOwnBlogs = async (req, res) => {
   try {
-    const userId = req.id; // Assuming `req.id` contains the authenticated user’s ID
+    const userId = req.id;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
@@ -163,8 +181,7 @@ export const getPublishedBlog = async (_, res) => {
 export const togglePublishBlog = async (req, res) => {
   try {
     const { blogId } = req.params;
-    const { publish } = req.query; // true, false
-    console.log(req.query);
+    const publishParam = req.query.publish;
 
     const blog = await Blog.findById(blogId);
     if (!blog) {
@@ -172,19 +189,35 @@ export const togglePublishBlog = async (req, res) => {
         message: "Blog not found!",
       });
     }
-    // publish status based on the query parameter
-    blog.isPublished = !blog.isPublished;
+
+    if (blog.author.toString() !== req.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to update publish status",
+      });
+    }
+
+    if (publishParam === "true") {
+      blog.isPublished = true;
+    } else if (publishParam === "false") {
+      blog.isPublished = false;
+    } else {
+      blog.isPublished = !blog.isPublished;
+    }
+
     await blog.save();
 
     const statusMessage = blog.isPublished ? "Published" : "Unpublished";
     return res.status(200).json({
       success: true,
       message: `Blog is ${statusMessage}`,
+      blog,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       message: "Failed to update status",
+      error: error.message,
     });
   }
 };
@@ -216,7 +249,6 @@ export const dislikeBlog = async (req, res) => {
         .status(404)
         .json({ message: "post not found", success: false });
 
-    //dislike logic
     await blog.updateOne({ $pull: { likes: userIdWhoLiked } });
     await blog.save();
 
@@ -232,10 +264,8 @@ export const getMyTotalBlogLikes = async (req, res) => {
   try {
     const userId = req.id;
 
-    // Step 1: Find all blogs authored by the logged-in user
     const myBlogs = await Blog.find({ author: userId }).select("likes");
 
-    // Step 2: Sum up the total likes
     const totalLikes = myBlogs.reduce(
       (acc, blog) => acc + (blog.likes?.length || 0),
       0,

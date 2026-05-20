@@ -5,25 +5,31 @@ const BlogCardList = ({ blog }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white dark:bg-gray-700 dark:border-gray-600 flex flex-col md:flex-row md:gap-10 p-5 rounded-2xl mt-6 shadow-lg border  transition-all">
-      <div>
+    <div className="bg-white dark:bg-gray-700 dark:border-gray-600 flex flex-col md:flex-row gap-6 p-6 rounded-3xl mt-6 shadow-lg border border-gray-200 transition-all duration-300 hover:-translate-y-1">
+      <div className="md:w-72 shrink-0 overflow-hidden rounded-3xl">
         <img
           src={blog.thumbnail}
-          alt=""
-          className="rounded-lg md:w-75 hover:scale-105 transition-all"
+          alt={blog.title}
+          className="w-full h-56 md:h-full object-cover transition-transform duration-300 hover:scale-105"
         />
       </div>
 
-      <div>
-        <h2 className="text-2xl font-semibold mt-3 md:mt-1">{blog.title}</h2>
-        <h3 className="text-gray-500 mt-1 ">{blog.subtitle}</h3>
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-semibold">{blog.title}</h2>
+          <p className="text-gray-500 dark:text-gray-300 mt-3 line-clamp-3">
+            {blog.subtitle}
+          </p>
+        </div>
 
-        <Button
-          onClick={() => navigate(`/blogs/${blog._id}`)}
-          className="mt-4 px-4 py-2 rounded-lg text-sm cursor-pointer"
-        >
-          Read More
-        </Button>
+        <div className="mt-6">
+          <Button
+            onClick={() => navigate(`/blogs/${blog._id}`)}
+            className="px-5 py-3 rounded-2xl text-sm cursor-pointer"
+          >
+            Read More
+          </Button>
+        </div>
       </div>
     </div>
   );

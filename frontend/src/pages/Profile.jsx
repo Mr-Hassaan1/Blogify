@@ -84,7 +84,7 @@ function Profile() {
         dispatch(setUser(res.data.user));
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || error.message || "Failed to update profile.");
     } finally {
       setLoading(false);
     }
@@ -94,13 +94,13 @@ function Profile() {
     <div className="pt-20 md:ml-80 md:h-screen">
       <div className="max-w-6xl mx-auto mt-8 ">
         <Card className=" flex md:flex-row flex-col gap-10 p-6 md:p-10 dark:bg-gray-800 mx-4 md:mx-0">
-          {/* image section */}
+
           <div className="flex flex-col items-center justify-center md:w-100">
             <Avatar className="w-40 h-40 border-2">
               <AvatarImage src={user?.photoUrl || userLogo} />
             </Avatar>
             <h1 className="text-center font-semibold text-xl text-gray-700 dark:text-gray-300 my-3">
-              {user?.occupation || "Mern Stack Developer"}
+              {user?.occupation || "Add your occupation"}
             </h1>
             <div className="flex gap-4 items-center">
               <a href={user?.facebook} target="_blank">
@@ -131,8 +131,7 @@ function Profile() {
             <div className="flex flex-col gap-2 items-start justify-start my-5">
               <Label className="">About Me :</Label>
               <p className="border dark:border-gray-600 p-6  rounded-lg">
-                {user?.bio ||
-                  "I'm a passionate web developer and content creator focused on frontend technologies. When I'm not coding, you can find me writing about tech, hiking, or experimenting with new recipes."}
+                {user?.bio || "Something about yourself"}
               </p>
             </div>
 
@@ -176,6 +175,20 @@ function Profile() {
                         className="col-span-3 text-gray-500"
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="occupation" className="text-right mb-1">
+                      Occupation:
+                    </Label>
+                    <Input
+                      id="occupation"
+                      name="occupation"
+                      value={input.occupation}
+                      onChange={changeEventHandler}
+                      placeholder="Enter your occupation"
+                      className="col-span-3 text-gray-500"
+                    />
                   </div>
 
                   <div className="flex gap-2">

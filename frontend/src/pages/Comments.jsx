@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import axios from "axios";
+import { toast } from "sonner";
 import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ export default function Comments() {
         setAllComments(res.data.comments);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || error.message || "Failed to load comments.");
     }
   };
 

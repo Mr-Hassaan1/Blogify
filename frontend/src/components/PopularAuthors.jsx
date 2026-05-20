@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import userLogo from "../assets/user.jpg";
 
@@ -13,15 +14,15 @@ const PopularAuthors = () => {
         setPopularUser(res.data.users);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to load authors.",
+      );
     }
   };
   useEffect(() => {
-    const timer = setTimeout(() => {
-      getAllUsers();
-    }, 0);
-
-    return () => clearTimeout(timer);
+    getAllUsers();
   }, []);
   return (
     <div>
@@ -38,8 +39,8 @@ const PopularAuthors = () => {
               <div key={index} className="flex flex-col gap-2 items-center">
                 <img
                   src={user.photoUrl || userLogo}
-                  alt=""
-                  className="rounded-full h-16 w-16 md:w-32 md:h-32"
+                  alt="User-Profile"
+                  className="rounded-full h-18 w-18 md:w-34 md:h-34"
                 />
                 <p className="font-semibold">
                   {user.firstName} {user.lastName}

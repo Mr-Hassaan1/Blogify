@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { toast } from "sonner";
 import { setBlog } from "@/Redux/blogSlice";
 
 const TotalProperty = () => {
@@ -23,7 +24,7 @@ const TotalProperty = () => {
             dispatch(setBlog(res.data.blogs));
           }
         } catch (error) {
-          console.log(error);
+          toast.error(error.response?.data?.message || error.message || "Failed to load your blogs.");
         }
       };
 
@@ -37,7 +38,7 @@ const TotalProperty = () => {
             setTotalComments(res.data.totalComments);
           }
         } catch (error) {
-          console.log(error);
+          toast.error(error.response?.data?.message || error.message || "Failed to load comments count.");
         }
       };
 
@@ -51,7 +52,7 @@ const TotalProperty = () => {
             setTotalLikes(res.data.totalLikes);
           }
         } catch (error) {
-          console.log(error);
+          toast.error(error.response?.data?.message || error.message || "Failed to load likes count.");
         }
       };
 

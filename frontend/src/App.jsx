@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import Blog from "./pages/Blog";
-import CreateBlog from "./pages/CreateBlog";
 import Dashboard from "./pages/Dashboard";
 import YourBlog from "./pages/YourBlog";
 import BlogView from "./pages/BlogView";
@@ -73,7 +72,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <CreateBlog />
+        <UpdateBlog />
       </>
     ),
   },
@@ -102,7 +101,7 @@ const router = createBrowserRouter([
         path: "create-blog",
         element: (
           <>
-            <CreateBlog />
+            <UpdateBlog />
           </>
         ),
       },

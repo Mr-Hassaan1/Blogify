@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
 import Logo from "../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -59,7 +59,9 @@ function Navbar() {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error);
+      toast.error(
+        error.response?.data?.message || error.message || "Logout failed",
+      );
     }
   };
 
@@ -67,7 +69,7 @@ function Navbar() {
     <div className="py-2 fixed w-full dark:bg-gray-800 dark:border-b-gray-600 border-b-gray-300 border-2 bg-gray-200 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-0">
         <div className="flex gap-7 items-center">
-          <Link>
+          <Link to={"/"}>
             <img
               src={Logo}
               alt="logo"
@@ -89,22 +91,37 @@ function Navbar() {
           </div>
         </div>
 
-        {/* nav section */}
         <nav className="flex gap-7 md:gap-8 items-center">
           <ul className=" hidden md:flex gap-8 items-center text-xl font-semibold">
-            <Link to={"/"}>
-              <li>Home</li>
-            </Link>
-            <Link to={"/blogs"}>
-              <li>Blogs</li>
-            </Link>
-            <Link to={"/about"}>
-              <li>About</li>
-            </Link>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-xl  ${isActive ? "bg-gray-800 text-gray-200 dark:bg-gray-200 dark:text-gray-900" : "bg-transparent"} cursor-pointer p-2 rounded-lg`
+              }
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/blogs"
+              className={({ isActive }) =>
+                `text-xl  ${isActive ? "bg-gray-800 text-gray-200 dark:bg-gray-200 dark:text-gray-900" : "bg-transparent"}  cursor-pointer p-2 rounded-lg`
+              }
+            >
+              Blogs
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `text-xl  ${isActive ? "bg-gray-800 text-gray-200 dark:bg-gray-200 dark:text-gray-900" : "bg-transparent"} font-bold cursor-pointer p-2 rounded-lg`
+              }
+            >
+              About
+            </NavLink>
           </ul>
           <div className="flex">
             <Button
-              className="h-10 w-10"
+              className="h-12 w-10 cursor-pointer"
               onClick={() => dispatch(toggleTheme())}
             >
               {theme === "light" ? <FaMoon /> : <FaSun />}
@@ -126,24 +143,28 @@ function Navbar() {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => navigate("/dashboard/profile")}
                       >
                         <User />
                         <span>Profile</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => navigate("/dashboard/your-blog")}
                       >
                         <ChartColumnBig />
                         <span>Your Blog</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => navigate("/dashboard/comments")}
                       >
                         <LiaCommentSolid />
                         <span>Comments</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => navigate("/dashboard/create-blog")}
                       >
                         <FaRegEdit />
@@ -151,23 +172,29 @@ function Navbar() {
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logoutHandler}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={logoutHandler}
+                    >
                       <LogOut />
                       <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button className="hidden md:block" onClick={logoutHandler}>
+                <Button
+                  className="hidden md:block cursor-pointer"
+                  onClick={logoutHandler}
+                >
                   Logout
                 </Button>
               </div>
             ) : (
-              <div className="ml-7 md:flex gap-2">
+              <div className="ml-7 mt-2  md:flex gap-5 hidden ">
                 <Link to={"/login"}>
-                  <Button>Login</Button>
+                  <Button className="cursor-pointer">Login</Button>
                 </Link>
-                <Link to={"/signup"} className=" md-block">
-                  <Button>Signup</Button>
+                <Link to={"/signup"}>
+                  <Button className="cursor-pointer">Signup</Button>
                 </Link>
               </div>
             )}

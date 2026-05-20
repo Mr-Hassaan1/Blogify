@@ -1,6 +1,7 @@
 import BlogCard from "@/components/BlogCard";
 import { useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setBlog } from "@/Redux/blogSlice";
 
@@ -19,7 +20,7 @@ const Blog = () => {
           dispatch(setBlog(res.data.blogs));
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || error.message || "Unable to fetch blogs.");
       }
     };
     getAllPublishedBlogs();
