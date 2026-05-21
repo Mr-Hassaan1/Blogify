@@ -69,7 +69,7 @@ function YourBlog() {
   const togglePublish = async (id, publish) => {
     try {
       const res = await axios.patch(
-        `http://localhost:3200/api/v1/blog/${id}?publish=${publish}`,
+        `http://localhost:3200/api/v1/blog/${id}?isPublished=${publish}`,
         null,
         { withCredentials: true },
       );
@@ -217,8 +217,7 @@ function YourBlog() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Blog?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undo. This will permanently delete this
-              blog.
+              You’re about to delete this Blog. This action cannot be reversed.
             </AlertDialogDescription>
           </AlertDialogHeader>
 

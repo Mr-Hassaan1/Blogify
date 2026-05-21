@@ -1,10 +1,5 @@
 import * as yup from "yup";
 
-const stripHtml = (value) => {
-    if (!value) return "";
-    return value.replace(/<[^>]*>/g, "").trim();
-};
-
 export const loginSchema = yup.object().shape({
     email: yup
         .string()
@@ -20,6 +15,7 @@ export const loginSchema = yup.object().shape({
 
 export const signupSchema = yup.object().shape({
     firstName: yup.string().required("First name is required"),
+    lastName: yup.string().required("Last name is required"),
     email: yup
         .string()
         .trim()
@@ -41,3 +37,13 @@ export const blogSchema = yup.object().shape({
         .required("Description is required"),
     category: yup.string().required("Category is required"),
 });
+
+export const validateField = async (fieldName, value, schema) => {
+    try {
+        if (!schema || !schema.fields || !schema.fields[fieldName]) return null;
+        await schema.fields[fieldName].validate(value);
+        return null;
+    } catch (error) {
+        return error.message;
+    }
+};

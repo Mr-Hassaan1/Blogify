@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ValidationMessage from "@/components/ValidationMessage";
-import { blogSchema } from "@/lib/validationSchemas";
+import { blogSchema, validateField } from "@/lib/validationSchemas";
 import {
   Select,
   SelectContent,
@@ -61,16 +61,30 @@ const UpdateBlog = () => {
     }
   }, [selectBlog, isCreateMode]);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setBlogData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (name === "title") {
+      const error = await validateField(name, value, blogSchema);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error,
+      }));
+    }
   };
 
-  const selectCategory = (value) => {
+  const selectCategory = async (value) => {
     setBlogData((prev) => ({ ...prev, category: value }));
+
+    const error = await validateField("category", value, blogSchema);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      category: error,
+    }));
   };
 
   const selectThumbnail = (e) => {
@@ -216,7 +230,14 @@ const UpdateBlog = () => {
             <JoditEditor
               ref={editor}
               value={content}
-              onChange={(newContent) => setContent(newContent)}
+              onChange={async (newContent) => {
+                setContent(newContent);
+                const error = await validateField("description", newContent, blogSchema);
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  description: error,
+                }));
+              }}
               className="jodit_toolbar min-h-65 md:min-h-80 mt-1"
             />
             <ValidationMessage name="description" errors={errors} />

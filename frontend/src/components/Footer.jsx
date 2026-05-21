@@ -29,14 +29,21 @@ const Footer = () => {
 
         <div className="mb-6 md:mb-0">
           <h3 className="text-xl font-semibold ">Quick Links</h3>
-          <ul className="mt-4 text-sm space-y-2 cursor-pointer">
-            <li>Home</li>
-            <li>Blogs</li>
-            <li>About Us</li>
-            <li>FAQs</li>
+          <ul className="mt-4 text-sm space-y-2">
+            <li className="cursor-pointer hover:underline">
+              <a href="/">Home</a>
+            </li>
+            <li className="cursor-pointer hover:underline">
+              <a href="/blogs">Blogs</a>
+            </li>
+            <li className="cursor-pointer hover:underline">
+              <a href="/about">About us</a>
+            </li>
+            <li className="cursor-pointer hover:underline">
+              <a href="#">FAQa</a>
+            </li>
           </ul>
         </div>
-=
         <div className="mb-6 md:mb-0">
           <h3 className="text-xl font-semibold">Follow Us</h3>
           <div className="flex space-x-4 mt-4 cursor-pointer">

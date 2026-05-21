@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "../Redux/authSlice";
-import { loginSchema } from "../lib/validationSchemas";
+import { loginSchema, validateField } from "../lib/validationSchemas";
 import ValidationMessage from "../components/ValidationMessage";
 
 function Login() {
@@ -29,11 +29,17 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setInputFields((previousData) => ({
       ...previousData,
       [name]: value,
+    }));
+
+    const error = await validateField(name, value, loginSchema);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
     }));
   };
 

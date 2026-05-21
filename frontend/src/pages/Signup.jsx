@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../Redux/authSlice";
-import { signupSchema } from "../lib/validationSchemas";
+import { signupSchema, validateField } from "../lib/validationSchemas";
 import ValidationMessage from "../components/ValidationMessage";
 
 function Signup() {
@@ -31,11 +31,17 @@ function Signup() {
   });
   const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setUserData((previousData) => ({
       ...previousData,
       [name]: value,
+    }));
+
+    const error = await validateField(name, value, signupSchema);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
     }));
   };
 

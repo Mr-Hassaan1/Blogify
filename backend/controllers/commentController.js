@@ -90,10 +90,8 @@ export const deleteComment = async (req, res) => {
 
         const blogId = comment.postId;
 
-        // Delete the comment
         await Comment.findByIdAndDelete(commentId);
 
-        // Remove comment ID from blog's comments array
         await Blog.findByIdAndUpdate(blogId, {
             $pull: { comments: commentId }
         });
@@ -158,7 +156,7 @@ export const editComment = async (req, res) => {
 
 export const likeComment = async (req, res) => {
     try {
-        const userId = req.id; // Assuming you're using auth middleware to get user ID
+        const userId = req.id;
         const commentId = req.params.id;
 
         const comment = await Comment.findById(commentId).populate("userId");
@@ -169,11 +167,11 @@ export const likeComment = async (req, res) => {
         const alreadyLiked = comment.likes.includes(userId);
 
         if (alreadyLiked) {
-            // If already liked, unlike it
+            
             comment.likes = comment.likes.filter(id => id !== userId);
             comment.numberOfLikes -= 1;
         } else {
-            // If not liked yet, like it
+           
             comment.likes.push(userId);
             comment.numberOfLikes += 1;
         }
@@ -198,7 +196,7 @@ export const getAllCommentsOnMyBlogs = async (req, res) => {
     try {
         const userId = req.id;
 
-        // Step 1: Find all blog posts created by the logged-in user
+        
         const myBlogs = await Blog.find({ author: userId }).select("_id");
 
         const blogIds = myBlogs.map(blog => blog._id);
@@ -212,7 +210,7 @@ export const getAllCommentsOnMyBlogs = async (req, res) => {
             });
         }
 
-        // Step 2: Find all comments on these blogs
+        
         const comments = await Comment.find({ postId: { $in: blogIds } })
             .populate("userId", "firstName lastName email")
             .populate("postId", "title");

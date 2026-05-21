@@ -7,12 +7,6 @@ export const createBlog = async (req, res) => {
     const { title, subtitle, description, category } = req.body;
     const file = req.file;
 
-    if (!title || !category) {
-      return res.status(400).json({
-        message: "Blog title and category must be required!",
-      });
-    }
-
     let thumbnail;
     if (file) {
       const fileUri = getDataUri(file);
@@ -181,7 +175,7 @@ export const getPublishedBlog = async (_, res) => {
 export const togglePublishBlog = async (req, res) => {
   try {
     const { blogId } = req.params;
-    const publishParam = req.query.publish;
+    const publishParam = req.query.isPublished ?? req.query.publish;
 
     const blog = await Blog.findById(blogId);
     if (!blog) {
@@ -225,38 +219,69 @@ export const togglePublishBlog = async (req, res) => {
 export const likeBlog = async (req, res) => {
   try {
     const blogId = req.params.id;
-    const userIdWhoLiked = req.id;
-    const blog = await Blog.findById(blogId).populate({ path: "likes" });
-    if (!blog)
-      return res
-        .status(404)
-        .json({ message: "Blog not found", success: false });
-    await blog.updateOne({ $addToSet: { likes: userIdWhoLiked } });
-    await blog.save();
-    return res.status(200).json({ message: "Blog liked", blog, success: true });
+    const userId = req.id;
+
+    const blog = await Blog.findById(blogId);
+
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found",
+        success: false,
+      });
+    }
+
+    await Blog.findByIdAndUpdate(blogId, {
+      $addToSet: { likes: userId },
+    });
+
+    // fetch updated blog
+    const updatedBlog = await Blog.findById(blogId);
+
+    return res.status(200).json({
+      message: "Blog liked",
+      blog: updatedBlog,
+      success: true,
+    });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
   }
 };
 
 export const dislikeBlog = async (req, res) => {
   try {
-    const userIdWhoLiked = req.id;
     const blogId = req.params.id;
+    const userId = req.id;
+
     const blog = await Blog.findById(blogId);
-    if (!blog)
-      return res
-        .status(404)
-        .json({ message: "post not found", success: false });
 
-    await blog.updateOne({ $pull: { likes: userIdWhoLiked } });
-    await blog.save();
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found",
+        success: false,
+      });
+    }
 
-    return res
-      .status(200)
-      .json({ message: "Blog disliked", blog, success: true });
+    await Blog.findByIdAndUpdate(blogId, {
+      $pull: { likes: userId },
+    });
+
+    const updatedBlog = await Blog.findById(blogId);
+
+    return res.status(200).json({
+      message: "Blog disliked",
+      blog: updatedBlog,
+      success: true,
+    });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
   }
 };
 

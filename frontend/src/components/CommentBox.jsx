@@ -16,6 +16,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const CommentBox = ({ selectedBlog }) => {
   const { user } = useSelector((store) => store.auth);
@@ -24,6 +34,7 @@ const CommentBox = ({ selectedBlog }) => {
   const { blog } = useSelector((store) => store.blog);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
+  const [deleteCommentId, setDeleteCommentId] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -271,7 +282,7 @@ const CommentBox = ({ selectedBlog }) => {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-500 cursor-pointer"
-                          onClick={() => deleteComment(item._id)}
+                          onClick={() => setDeleteCommentId(item._id)}
                         >
                           <Trash2 />
                           Delete
@@ -285,6 +296,32 @@ const CommentBox = ({ selectedBlog }) => {
           })}
         </div>
       ) : null}
+      <AlertDialog
+        open={!!deleteCommentId}
+        onOpenChange={() => setDeleteCommentId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Comment?</AlertDialogTitle>
+            <AlertDialogDescription>
+                You’re about to delete this comment. This action cannot be reversed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600"
+              onClick={() => {
+                deleteComment(deleteCommentId);
+                setDeleteCommentId(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
