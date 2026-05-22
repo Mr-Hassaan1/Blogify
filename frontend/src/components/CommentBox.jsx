@@ -110,8 +110,11 @@ const CommentBox = ({ selectedBlog }) => {
           (item) => item._id !== commentId,
         );
         console.log(updatedCommentData);
-
         dispatch(setComment(updatedCommentData));
+        const updatedBlogData = blog.map((p) =>
+          p._id === selectedBlog._id ? { ...p, comments: updatedCommentData } : p,
+        );
+        dispatch(setBlog(updatedBlogData));
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -197,9 +200,9 @@ const CommentBox = ({ selectedBlog }) => {
       </div>
       {comment.length > 0 ? (
         <div className="mt-7 bg-gray-100 dark:bg-gray-800 p-5 rounded-md">
-          {comment.map((item, index) => {
+          {comment.map((item) => {
             return (
-              <div key={index} className="mb-4">
+              <div key={item._id} className="mb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex gap-3 items-start">
                     <Avatar>
