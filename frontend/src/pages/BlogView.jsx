@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
+  // BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -10,10 +11,10 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import userLogo from "../assets/user.jpg" 
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, MessageSquare, Share2 } from "lucide-react";
+import { Bookmark, Heart, MessageSquare, Share2 } from "lucide-react";
 import CommentBox from "@/components/CommentBox";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
@@ -25,82 +26,43 @@ const BlogView = () => {
   const blogId = params.blogId;
   const { blog } = useSelector((store) => store.blog);
   const { user } = useSelector((store) => store.auth);
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [blogLike, setBlogLike] = useState(0);
+  const selectedBlog = blog.find((blog) => blog._id === blogId);
+  const [blogLike, setBlogLike] = useState(selectedBlog?.likes.length);
   const { comment } = useSelector((store) => store.comment);
-  const [liked, setLiked] = useState(false);
-
-  const [bookmarked, setBookmarked] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-
+  const [liked, setLiked] = useState(
+    selectedBlog?.likes.includes(user?._id) || false,
+  );
   const dispatch = useDispatch();
-
-  // Fetch blog on mount
-  useEffect(() => {
-    const fetchBlog = async () => {
-      setLoading(true);
-      try {
-        // First try to find in Redux
-        const foundBlog = blog.find((b) => b._id === blogId);
-        if (foundBlog) {
-          setSelectedBlog(foundBlog);
-          setBlogLike(foundBlog?.likes?.length || 0);
-          setLiked(foundBlog?.likes?.includes(user?._id) || false);
-          setLoading(false);
-          return;
-        }
-
-        // If not in Redux, fetch from API
-        const res = await axios.get(
-          `https://blogify-backend-lemon.vercel.app/api/v1/blog/get-blog/${blogId}`,
-          { withCredentials: true },
-        );
-
-        if (res.data.success) {
-          const blogData = res.data.blog;
-          setSelectedBlog(blogData);
-          setBlogLike(blogData?.likes?.length || 0);
-          setLiked(blogData?.likes?.includes(user?._id) || false);
-          // Also add to Redux so other components can use it
-          dispatch(setBlog([...blog, blogData]));
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to load blog");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (blogId) {
-      fetchBlog();
-    }
-  }, [blogId, user?._id]);
+  console.log(selectedBlog);
 
   const likeOrDislikeHandler = async () => {
-    if (!selectedBlog) return;
     try {
       const action = liked ? "dislike" : "like";
       const res = await axios.get(
-        `https://blogify-backend-lemon.vercel.app/api/v1/blog/${selectedBlog._id}/${action}`,
+        `https://mern-blog-ha28.onrender.com/api/v1/blog/${selectedBlog?._id}/${action}`,
         { withCredentials: true },
       );
       if (res.data.success) {
         const updatedLikes = liked ? blogLike - 1 : blogLike + 1;
         setBlogLike(updatedLikes);
         setLiked(!liked);
-        setSelectedBlog({
-          ...selectedBlog,
-          likes: liked
-            ? selectedBlog.likes.filter((id) => id !== user?._id)
-            : [...selectedBlog.likes, user?._id],
-        });
+
+        const updatedBlogData = blog.map((p) =>
+          p._id === selectedBlog._id
+            ? {
+                ...p,
+                likes: liked
+                  ? p.likes.filter((id) => id !== user._id)
+                  : [...p.likes, user._id],
+              }
+            : p,
+        );
         toast.success(res.data.message);
+        dispatch(setBlog(updatedBlogData));
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Failed to update like");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -131,50 +93,24 @@ const BlogView = () => {
   };
 
   useEffect(() => {
-    if (selectedBlog) {
-      window.scrollTo(0, 0);
-    }
-  }, [selectedBlog]);
-
-  if (loading) {
-    return (
-      <div className="pt-14">
-        <div className="max-w-6xl mx-auto p-10">
-          <div className="flex justify-center items-center min-h-screen">
-            <p className="text-center text-muted-foreground">Loading blog...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!selectedBlog) {
-    return (
-      <div className="pt-14">
-        <div className="max-w-6xl mx-auto p-10">
-          <div className="flex justify-center items-center min-h-screen">
-            <p className="text-center text-red-500">Blog not found</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="pt-14">
       <div className="max-w-6xl mx-auto p-10">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to={"/"}>Home</Link>
-              </BreadcrumbLink>
+              <Link to={"/"}>
+                <BreadcrumbLink>Home</BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
+
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to={"/blogs"}>Blogs</Link>
-              </BreadcrumbLink>
+              <Link to={"/blogs"}>
+                <BreadcrumbLink>Blogs</BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -190,8 +126,8 @@ const BlogView = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src={selectedBlog.author.photoUrl || userLogo } alt="Author" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={selectedBlog.author.photoUrl} alt="Author" />
+                <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium">
@@ -203,10 +139,12 @@ const BlogView = () => {
               </div>
             </div>
             <div className="text-sm text-muted-foreground">
-              Published on {changeTimeFormat(selectedBlog.createdAt)} •
+              Published on {changeTimeFormat(selectedBlog.createdAt)} • 8 min
+              read
             </div>
           </div>
         </div>
+
         {/* Featured Image */}
         <div className="mb-8 rounded-lg overflow-hidden">
           <img
@@ -221,16 +159,18 @@ const BlogView = () => {
           </p>
         </div>
 
-        <p dangerouslySetInnerHTML={{ __html: selectedBlog.description }} />
+        <p
+          className=""
+          dangerouslySetInnerHTML={{ __html: selectedBlog.description }}
+        />
 
         <div className="mt-10">
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-8">
-            <Badge variant="secondary">Storytelling</Badge>
-            <Badge variant="secondary">Ideas</Badge>
-            <Badge variant="secondary">Blogs</Badge>
-            <Badge variant="secondary">Trends</Badge>
-            <Badge variant="secondary">Insights</Badge>
+            <Badge variant="secondary">Next.js</Badge>
+            <Badge variant="secondary">React</Badge>
+            <Badge variant="secondary">Web Development</Badge>
+            <Badge variant="secondary">JavaScript</Badge>
           </div>
 
           {/* Engagement */}
@@ -240,12 +180,18 @@ const BlogView = () => {
                 onClick={likeOrDislikeHandler}
                 variant="ghost"
                 size="sm"
-                className="cursor-pointer flex items-center gap-1"
+                className="flex items-center gap-1"
               >
                 {liked ? (
-                  <FaHeart size={"24"} className=" text-red-600" />
+                  <FaHeart
+                    size={"24"}
+                    className="cursor-pointer text-red-600"
+                  />
                 ) : (
-                  <FaRegHeart size={"24"} className=" hover:text-gray-600" />
+                  <FaRegHeart
+                    size={"24"}
+                    className="cursor-pointer hover:text-gray-600 text-white"
+                  />
                 )}
 
                 <span>{blogLike}</span>
@@ -253,41 +199,27 @@ const BlogView = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className=" cursor-pointer flex items-center gap-1"
-                onClick={() => setShowComments((s) => !s)}
-                aria-expanded={showComments}
+                className="flex items-center gap-1"
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>{comment.length} Comments</span>
               </Button>
             </div>
             <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setBookmarked(!bookmarked)}
-                className="cursor-pointer"
-              >
-                <Bookmark
-                  className={`h-4 w-4 transition-colors ${
-                    bookmarked
-                      ? "fill-black text-black dark:fill-white dark:text-white"
-                      : "text-gray-500"
-                  }`}
-                />
+              <Button variant="ghost" size="sm">
+                <Bookmark className="h-4 w-4" />
               </Button>
               <Button
                 onClick={() => handleShare(selectedBlog._id)}
                 variant="ghost"
-                size="sm "
-                className="cursor-pointer"
+                size="sm"
               >
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
-        {showComments && <CommentBox selectedBlog={selectedBlog} />}
+        <CommentBox selectedBlog={selectedBlog} />
       </div>
     </div>
   );
