@@ -20,6 +20,7 @@ const Blog = () => {
           dispatch(setBlog(res.data.blogs));
         }
       } catch (error) {
+        console.log(error);
         toast.error(error.response?.data?.message || error.message || "Unable to fetch blogs.");
       }
     };

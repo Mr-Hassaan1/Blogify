@@ -43,7 +43,7 @@ const UpdateBlog = () => {
   const [previewThumbnail, setPreviewThumbnail] = useState("");
 
   useEffect(() => {
-    if (selectBlog) {
+    if (selectBlog && !isCreateMode) {
       setBlogData({
         title: selectBlog.title || "",
         subtitle: selectBlog.subtitle || "",
@@ -52,9 +52,7 @@ const UpdateBlog = () => {
       });
       setContent(selectBlog.description || "");
       setPreviewThumbnail(selectBlog.thumbnail || "");
-    }
-
-    if (isCreateMode) {
+    } else if (isCreateMode) {
       setBlogData({ title: "", subtitle: "", category: "", thumbnail: null });
       setContent("");
       setPreviewThumbnail("");
@@ -124,9 +122,13 @@ const UpdateBlog = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         if (isCreateMode) {
-          dispatch(
-            setBlog([...(Array.isArray(blog) ? blog : []), res.data.blog]),
-          );
+          // Add new blog to Redux
+          const updatedBlogs = Array.isArray(blog) ? [...blog, res.data.blog] : [res.data.blog];
+          dispatch(setBlog(updatedBlogs));
+        } else {
+          // Update existing blog in Redux
+          const updatedBlogs = blog.map((b) => b._id === id ? res.data.blog : b);
+          dispatch(setBlog(updatedBlogs));
         }
         navigate(`/dashboard/your-blog`);
       } else {

@@ -24,43 +24,78 @@ const BlogView = () => {
   const blogId = params.blogId;
   const { blog } = useSelector((store) => store.blog);
   const { user } = useSelector((store) => store.auth);
-  const selectedBlog = blog.find((blog) => blog._id === blogId);
-  const [blogLike, setBlogLike] = useState(selectedBlog?.likes.length);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [blogLike, setBlogLike] = useState(0);
   const { comment } = useSelector((store) => store.comment);
-  const [liked, setLiked] = useState(
-    selectedBlog?.likes.includes(user?._id) || false,
-  );
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const dispatch = useDispatch();
-  console.log(selectedBlog);
+
+  // Fetch blog on mount
+  useEffect(() => {
+    const fetchBlog = async () => {
+      setLoading(true);
+      try {
+        // First try to find in Redux
+        const foundBlog = blog.find((b) => b._id === blogId);
+        if (foundBlog) {
+          setSelectedBlog(foundBlog);
+          setBlogLike(foundBlog?.likes?.length || 0);
+          setLiked(foundBlog?.likes?.includes(user?._id) || false);
+          setLoading(false);
+          return;
+        }
+
+        // If not in Redux, fetch from API
+        const res = await axios.get(
+          `https://blogify-backend-lemon.vercel.app/api/v1/blog/get-blog/${blogId}`,
+          { withCredentials: true },
+        );
+
+        if (res.data.success) {
+          const blogData = res.data.blog;
+          setSelectedBlog(blogData);
+          setBlogLike(blogData?.likes?.length || 0);
+          setLiked(blogData?.likes?.includes(user?._id) || false);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load blog");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (blogId) {
+      fetchBlog();
+    }
+  }, [blogId, user?._id]);
 
   const likeOrDislikeHandler = async () => {
+    if (!selectedBlog) return;
     try {
       const action = liked ? "dislike" : "like";
       const res = await axios.get(
-        `https://blogify-backend-lemon.vercel.app/api/v1/blog/${selectedBlog?._id}/${action}`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/blog/${selectedBlog._id}/${action}`,
         { withCredentials: true },
       );
       if (res.data.success) {
         const updatedLikes = liked ? blogLike - 1 : blogLike + 1;
         setBlogLike(updatedLikes);
         setLiked(!liked);
-
-        const updatedBlogData = blog.map((p) =>
-          p._id === selectedBlog._id
-            ? {
-                ...p,
-                likes: liked
-                  ? p.likes.filter((id) => id !== user._id)
-                  : [...p.likes, user._id],
-              }
-            : p,
-        );
+        setSelectedBlog({
+          ...selectedBlog,
+          likes: liked
+            ? selectedBlog.likes.filter((id) => id !== user?._id)
+            : [...selectedBlog.likes, user?._id],
+        });
         toast.success(res.data.message);
-        dispatch(setBlog(updatedBlogData));
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Failed to update like");
     }
   };
 
@@ -91,8 +126,34 @@ const BlogView = () => {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    if (selectedBlog) {
+      window.scrollTo(0, 0);
+    }
+  }, [selectedBlog]);
+
+  if (loading) {
+    return (
+      <div className="pt-14">
+        <div className="max-w-6xl mx-auto p-10">
+          <div className="flex justify-center items-center min-h-screen">
+            <p className="text-center text-muted-foreground">Loading blog...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedBlog) {
+    return (
+      <div className="pt-14">
+        <div className="max-w-6xl mx-auto p-10">
+          <div className="flex justify-center items-center min-h-screen">
+            <p className="text-center text-red-500">Blog not found</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="pt-14">
       <div className="max-w-6xl mx-auto p-10">
@@ -198,6 +259,8 @@ const BlogView = () => {
                 variant="ghost"
                 size="sm"
                 className="flex items-center gap-1"
+                onClick={() => setShowComments((s) => !s)}
+                aria-expanded={showComments}
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>{comment.length} Comments</span>

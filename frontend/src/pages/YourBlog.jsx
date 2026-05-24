@@ -60,6 +60,7 @@ function YourBlog() {
   }, [dispatch]);
 
   const dateHandler = (index) => {
+    if (!blog || !blog[index]) return "N/A";
     const date = new Date(blog[index].createdAt);
     const localDate = date.toLocaleDateString();
     return localDate;
