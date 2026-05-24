@@ -42,7 +42,7 @@ const RecentBlog = () => {
     const getAllPublishedBlogs = async () => {
       try {
         const res = await axios.get(
-          `https://blogify-backend-lemon.vercel.app/api/v1/blog//get-published-blogs`,
+          `https://blogify-backend-lemon.vercel.app/api/v1/blog/get-published-blogs`,
           { withCredentials: true },
         );
         if (res.data.success) {
