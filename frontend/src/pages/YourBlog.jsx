@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setBlog, resetBlog } from "@/Redux/blogSlice";
+import { setBlog } from "@/Redux/blogSlice";
 import { CloudOff, Edit, Globe, Trash2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -42,8 +42,6 @@ function YourBlog() {
   const [publishData, setPublishData] = useState(null);
 
   useEffect(() => {
-    dispatch(resetBlog());
-    
     const getOwnBlog = async () => {
       try {
         const res = await axios.get(

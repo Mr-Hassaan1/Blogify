@@ -3,14 +3,13 @@ import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setBlog, resetBlog } from "@/Redux/blogSlice";
+import { setBlog } from "@/Redux/blogSlice";
 
 const Blog = () => {
   const dispatch = useDispatch();
   const { blog } = useSelector((store) => store.blog);
 
   useEffect(() => {
-    dispatch(resetBlog());
     const getAllPublishedBlogs = async () => {
       try {
         const res = await axios.get(
