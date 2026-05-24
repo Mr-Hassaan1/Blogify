@@ -7,7 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
-import { setUser } from "@/Redux/authSlice";
+import { setUser, resetAuth } from "@/Redux/authSlice";
+import { resetBlog } from "@/Redux/blogSlice";
+import { resetComment } from "@/Redux/commentSlice";
 import userLogo from "../assets/user.jpg";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
 import { ChartColumnBig, LogOut, Search, User } from "lucide-react";
@@ -64,7 +66,10 @@ function Navbar() {
 
       if (res.data.success) {
         navigate("/login");
-        dispatch(setUser(null));
+        // Clear all user-specific Redux state
+        dispatch(resetAuth());
+        dispatch(resetBlog());
+        dispatch(resetComment());
         toast.success(res.data.message);
       }
     } catch (error) {

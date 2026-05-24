@@ -12,8 +12,12 @@ const commentSlice = createSlice({
         },
         setComment:(state, action) => {
             state.comment = action.payload;
-        }  
+        },
+        resetComment:(state) => {
+            state.loading = false;
+            state.comment = [];
+        }
     }
 });
-export const {setLoading, setComment} = commentSlice.actions;
+export const {setLoading, setComment, resetComment} = commentSlice.actions;
 export default commentSlice.reducer;
